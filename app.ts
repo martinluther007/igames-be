@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 import chalk from "chalk";
 import cors from "cors";
 import AuthController from "./controllers/auth.controller";
+import { UserController } from "./controllers/user.controller";
 
 const app = express();
 app.use(express.json());
@@ -154,6 +155,9 @@ io.on("connection", (socket) => {
   });
 });
 
+const userController = new UserController();
+
 app.use("/auth", authRouter);
+app.use("/leaderboard", userController.getLeaderBoard.bind(userController));
 
 export default server;

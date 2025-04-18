@@ -33,4 +33,13 @@ export class UserController {
       });
     }
   }
+
+  async getLeaderBoard(req: Request, res: Response, next: NextFunction) {
+    const users = await USER.find().sort({ wins: -1 }).limit(10);
+
+    res.status(200).json({
+      status: "success",
+      data: users,
+    });
+  }
 }
