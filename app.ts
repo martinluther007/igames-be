@@ -88,7 +88,6 @@ const startGameSession = () => {
       currentSession.isActive = false;
     }
 
-    console.log(players);
     const winningNumber = Math.floor(Math.random() * 10) + 1;
 
     if (players.length) {
