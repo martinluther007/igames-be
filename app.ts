@@ -88,10 +88,10 @@ const startGameSession = () => {
       currentSession.isActive = false;
     }
 
-    if (players.length) {
-      // const winningNumber = Math.floor(Math.random() * 10) + 1;
-      const winningNumber = 1;
+    console.log(players);
+    const winningNumber = Math.floor(Math.random() * 10) + 1;
 
+    if (players.length) {
       const winners = players.filter(
         (player) => Number(player.number) === winningNumber
       );
