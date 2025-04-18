@@ -39,7 +39,7 @@ app.get("/", (req, res) => {
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000", // or your frontend URL
+    origin: "fabulous-eclair-951375.netlify.app", // or your frontend URL
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -47,8 +47,11 @@ const io = new Server(server, {
 
 io.use((socket, next) => {
   const origin = socket.handshake.headers.origin;
-  console.log(origin);
-  if (origin === "http://localhost:3000") {
+
+  if (
+    origin === "http://localhost:3000" ||
+    origin === "fabulous-eclair-951375.netlify.app"
+  ) {
     return next();
   }
   return next(new Error("Unauthorized origin"));
