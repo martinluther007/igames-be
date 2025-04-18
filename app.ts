@@ -39,7 +39,7 @@ app.get("/", (req, res) => {
 
 const io = new Server(server, {
   cors: {
-    origin: "https://fabulous-eclair-951375.netlify.app", // or your frontend URL
+    origin: "https://fabulous-eclair-951375.netlify.app",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -88,24 +88,27 @@ const startGameSession = () => {
       currentSession.isActive = false;
     }
 
-    // const winningNumber = Math.floor(Math.random() * 10) + 1;
-    const winningNumber = 1;
+    if (players.length) {
+      // const winningNumber = Math.floor(Math.random() * 10) + 1;
+      const winningNumber = 1;
 
-    const winners = players.filter(
-      (player) => Number(player.number) === winningNumber
-    );
+      const winners = players.filter(
+        (player) => Number(player.number) === winningNumber
+      );
 
-    for (const winner of winners) {
-      await USER.findByIdAndUpdate(winner.userId, { $inc: { wins: 1 } });
+      for (const winner of winners) {
+        await USER.findByIdAndUpdate(winner.userId, { $inc: { wins: 1 } });
+      }
+
+      await GAME_SESSION.create({
+        startTime: currentSession?.startTime,
+        players,
+        correctNumber: winningNumber,
+        winners: winners.map((winner) => winner.userId),
+      });
+      io.emit("session_end", { winners, answer: winningNumber });
     }
 
-    await GAME_SESSION.create({
-      startTime: currentSession?.startTime,
-      players,
-      correctNumber: winningNumber,
-      winners: winners.map((winner) => winner.userId),
-    });
-    io.emit("session_end", { winners, answer: winningNumber });
     setTimeout(startGameSession, 30000);
   }, currentSession.duration);
 };
