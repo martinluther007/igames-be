@@ -39,7 +39,7 @@ app.get("/", (req, res) => {
 
 const io = new Server(server, {
   cors: {
-    origin: "fabulous-eclair-951375.netlify.app", // or your frontend URL
+    origin: "https://fabulous-eclair-951375.netlify.app", // or your frontend URL
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -50,7 +50,7 @@ io.use((socket, next) => {
 
   if (
     origin === "http://localhost:3000" ||
-    origin === "fabulous-eclair-951375.netlify.app"
+    origin === "https://fabulous-eclair-951375.netlify.app"
   ) {
     return next();
   }
