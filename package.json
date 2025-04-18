@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node build/server.js",
+    "build": "tsc -p .",
     "dev": "ts-node-dev program.ts"
   },
   "keywords": [],
