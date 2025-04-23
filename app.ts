@@ -93,7 +93,7 @@ const startGameSession = () => {
       currentSession.isActive = false;
     }
 
-    const winningNumber = Math.floor(Math.random() * 10) + 1;
+    const winningNumber = Math.floor(Math.random() * 9) + 1;
     // const winningNumber = 1;
 
     if (players.length) {
