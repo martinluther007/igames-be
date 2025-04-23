@@ -32,6 +32,8 @@ export const configureDatabase = () => {
     );
 };
 
+const timeLeftForNewSession = 30000;
+
 const server = http.createServer(app);
 let currentSession: ISession | null = null;
 app.get("/", (req, res) => {
@@ -41,6 +43,7 @@ app.get("/", (req, res) => {
 const io = new Server(server, {
   cors: {
     origin: "https://fabulous-eclair-951375.netlify.app",
+    // origin: "http://localhost:3000",
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -63,6 +66,7 @@ let players: IPlayer[] = [];
 const startGameSession = () => {
   players = [];
   let countdownInterval: NodeJS.Timeout | null = null;
+  let sessionStartcountdownInterval: NodeJS.Timeout | null = null;
 
   currentSession = {
     startTime: Date.now(),
@@ -90,6 +94,7 @@ const startGameSession = () => {
     }
 
     const winningNumber = Math.floor(Math.random() * 10) + 1;
+    // const winningNumber = 1;
 
     if (players.length) {
       const winners = players.filter(
@@ -109,7 +114,17 @@ const startGameSession = () => {
       io.emit("session_end", { winners, answer: winningNumber });
     }
 
-    setTimeout(startGameSession, 30000);
+    let timeToStart = timeLeftForNewSession / 1000;
+
+    sessionStartcountdownInterval = setInterval(() => {
+      timeToStart--;
+
+      io.emit("time_till_new_session", { timeToStart });
+      if (timeToStart <= 0 && sessionStartcountdownInterval !== null)
+        clearInterval(sessionStartcountdownInterval);
+    }, 1000);
+
+    setTimeout(startGameSession, timeLeftForNewSession);
   }, currentSession.duration);
 };
 
@@ -121,7 +136,7 @@ io.on("connection", (socket) => {
   socket.on("join_game", ({ token, name }) => {
     try {
       const id = AuthController.verifyAuth(token);
-      console.log(id);
+      // console.log(id);
       if (currentSession?.isActive) {
         players.push({ userId: id, username: name });
 
@@ -131,7 +146,7 @@ io.on("connection", (socket) => {
         socket.emit("session_closed");
       }
     } catch (error) {
-      console.log(error);
+      // console.log(error);
       socket.emit("error", "something went wrong joining game");
     }
   });
